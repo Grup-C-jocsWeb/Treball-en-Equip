@@ -1,69 +1,57 @@
-
-
 class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'GameScene' });
     }
 
     preload() {
-        // Cargar los recursos del juego aquí
         this.load.spritesheet('player', 'assets/artem.png', { frameWidth: 48, frameHeight: 64 });
-        this.load.image('key', 'assets/key.png'); // Cargar la imagen de la llave
+        this.load.image('key', 'assets/key.png');
+        this.load.image('keyblue', 'assets/keyblue.png');
+        this.load.image('keygreen', 'assets/keygreen.png');
+        this.load.image('keyred', 'assets/keyred.png');
     }
 
     create(data) {
-        // Inicializar los objetos del juego aquí
         this.player = this.physics.add.sprite(400, 300, 'player');
-    
-        // Crear la llave y añadirla al mundo
-        if (!this.keyCollected){
-            this.key = this.physics.add.sprite(500, 500, 'key');
-            this.key.setScale(0.1);
-        }
 
-        if (!this.keyCollected){
-            this.key = this.physics.add.sprite(400, 500, 'key');
-            this.key.setScale(0.1);
-        }
+        this.keyCollected = false;
+        this.keyblueCollected = false;
+        this.keygreenCollected = false;
+        this.keyredCollected = false;
 
-        if (!this.keyCollected){
-            this.key = this.physics.add.sprite(300, 500, 'key');
-            this.key.setScale(0.1);
-        }
+        this.createKeys();
 
-        if (!this.keyCollected){
-            this.key = this.physics.add.sprite(200, 500, 'key');
-            this.key.setScale(0.1);
-        }
+        this.physics.add.overlap(this.player, this.key, () => this.collectKey('key', this.key), null, this);
+        this.physics.add.overlap(this.player, this.keyblue, () => this.collectKey('keyblue', this.keyblue), null, this);
+        this.physics.add.overlap(this.player, this.keygreen, () => this.collectKey('keygreen', this.keygreen), null, this);
+        this.physics.add.overlap(this.player, this.keyred, () => this.collectKey('keyred', this.keyred), null, this);
 
-        if (!this.keyCollected){
-            this.key = this.physics.add.sprite(100, 500, 'key');
-            this.key.setScale(0.1);
-        }
-        
-        // Habilitar colisiones entre el jugador y la llave
-        this.physics.add.overlap(this.player, this.key, this.collectKey, null, this);
-    
-        // Inicializar el inventario
         this.inventory = [];
-        this.maxInventorySize = 5;
-    
-        // Crear visualización del inventario
+        this.maxInventorySize = 4;
+
+        this.menuButton = this.add.text(400, 450, 'Ir al Menú', { fontSize: '32px', fill: '#fff' })
+            .setOrigin(0.5)
+            .setInteractive()
+            .setVisible(false);
+        
+        this.menuButton.on('pointerdown', () => {
+            this.scene.start('MenuScene');
+        });
         this.inventorySlots = [];
         for (let i = 0; i < this.maxInventorySize; i++) {
             let slot = this.add.rectangle(270 + i * 50, 540, 44, 44, 0x666666).setOrigin(0);
             this.inventorySlots.push(slot);
         }
-    
-        // Ajustar el escalado para arte de píxeles
+
         this.player.setScale(1);
         this.player.setOrigin(0.5, 0.5);
         this.player.setTexture('player');
-    
-        // Deshabilitar interpolación de imágenes para arte de píxeles
         this.textures.get('player').setFilter(Phaser.Textures.FilterMode.NEAREST);
+        this.textures.get('key').setFilter(Phaser.Textures.FilterMode.NEAREST);
+        this.textures.get('keyblue').setFilter(Phaser.Textures.FilterMode.NEAREST);
+        this.textures.get('keygreen').setFilter(Phaser.Textures.FilterMode.NEAREST);
+        this.textures.get('keyred').setFilter(Phaser.Textures.FilterMode.NEAREST);
 
-        // Verificar si las animaciones ya existen antes de crearlas
         if (!this.anims.exists('walk_up')) {
             this.anims.create({
                 key: 'walk_up',
@@ -100,14 +88,11 @@ class GameScene extends Phaser.Scene {
             });
         }
 
-        // Configurar las teclas de movimiento
         this.cursors = this.input.keyboard.createCursorKeys();
         this.keys = this.input.keyboard.addKeys('W,S,A,D');
 
-        // Detectar la tecla "Escape"
         this.input.keyboard.on('keydown-ESC', this.pauseGame, this);
 
-        // Crear botones de pausa pero ocultarlos inicialmente
         this.resumeButton = this.add.text(400, 150, 'Reanudar', { fontSize: '32px', fill: '#fff' })
             .setOrigin(0.5)
             .setInteractive()
@@ -123,15 +108,12 @@ class GameScene extends Phaser.Scene {
             .setInteractive()
             .setVisible(false);
 
-        // Añadir funcionalidad a los botones
         this.resumeButton.on('pointerdown', this.resumeGame, this);
         this.menuButton.on('pointerdown', this.returnToMenu, this);
         this.saveButton.on('pointerdown', this.saveGame, this);
 
-        // Inicializar estado de pausa
         this.isPaused = false;
 
-        // Si se ha solicitado cargar un juego, cargar el estado
         if (data.loadGame) {
             this.loadGame();
         }
@@ -186,8 +168,11 @@ class GameScene extends Phaser.Scene {
                 x: this.player.x,
                 y: this.player.y
             },
-            inventory: this.inventory, // Guardar el estado del inventario
-            keyCollected: this.keyCollected // Guardar si la llave ha sido recogida
+            inventory: this.inventory,
+            keyCollected: this.keyCollected,
+            keyblueCollected: this.keyblueCollected,
+            keygreenCollected: this.keygreenCollected,
+            keyredCollected: this.keyredCollected
         };
         localStorage.setItem('unmaskedCrimeSave', JSON.stringify(gameState));
         alert('Juego guardado!');
@@ -199,38 +184,107 @@ class GameScene extends Phaser.Scene {
             const gameState = JSON.parse(savedState);
             this.player.setX(gameState.player.x);
             this.player.setY(gameState.player.y);
-            // Restaurar el estado del inventario
             this.inventory = gameState.inventory || [];
             this.updateInventory();
-            // Restaurar el estado de la llave
             this.keyCollected = gameState.keyCollected || false;
-            if (!this.keyCollected) {
-                this.key = this.physics.add.sprite(500, 500, 'key');
-                this.key.setScale(0.1);
-                this.physics.add.overlap(this.player, this.key, this.collectKey, null, this);
+            this.keyblueCollected = gameState.keyblueCollected || false;
+            this.keygreenCollected = gameState.keygreenCollected || false;
+            this.keyredCollected = gameState.keyredCollected || false;
+
+            // Si la llave está recolectada en el estado guardado, destrúyela del mapa
+            if (this.keyCollected && this.key) {
+                this.key.destroy();
+            }
+    
+            if (this.keyblueCollected && this.keyblue) {
+                this.keyblue.destroy();
+            }
+    
+            if (this.keygreenCollected && this.keygreen) {
+                this.keygreen.destroy();
+            }
+    
+            if (this.keyredCollected && this.keyred) {
+                this.keyred.destroy();
+            }
+        }
+    }
+    
+    createKeys() {
+        if (!this.keyCollected && (!this.inventory || !this.inventory.includes('key'))) {
+            this.key = this.physics.add.sprite(500, 500, 'key');
+            this.key.setScale(0.1);
+            this.physics.add.overlap(this.player, this.key, () => this.collectKey('key', this.key), null, this);
+        }
+    
+        if (!this.keyblueCollected && (!this.inventory || !this.inventory.includes('keyblue'))) {
+            this.keyblue = this.physics.add.sprite(400, 500, 'keyblue');
+            this.keyblue.setScale(0.1);
+            this.physics.add.overlap(this.player, this.keyblue, () => this.collectKey('keyblue', this.keyblue), null, this);
+        }
+    
+        if (!this.keygreenCollected && (!this.inventory || !this.inventory.includes('keygreen'))) {
+            this.keygreen = this.physics.add.sprite(300, 500, 'keygreen');
+            this.keygreen.setScale(0.1);
+            this.physics.add.overlap(this.player, this.keygreen, () => this.collectKey('keygreen', this.keygreen), null, this);
+        }
+    
+        if (!this.keyredCollected && (!this.inventory || !this.inventory.includes('keyred'))) {
+            this.keyred = this.physics.add.sprite(200, 500, 'keyred');
+            this.keyred.setScale(0.1);
+            this.physics.add.overlap(this.player, this.keyred, () => this.collectKey('keyred', this.keyred), null, this);
+        }
+    }
+    
+
+
+    collectKey(keyName, keySprite) {
+        if (!this.inventory.includes(keyName)) {
+            if (this.inventory.length < this.maxInventorySize) {
+                this.inventory.push(keyName);
+                keySprite.destroy(); // Destruir la instancia de la llave en el mapa
+                this.updateInventory();
+                
+                // Marcar la llave como recolectada según su nombre
+                switch (keyName) {
+                    case 'key':
+                        this.keyCollected = true;
+                        break;
+                    case 'keyblue':
+                        this.keyblueCollected = true;
+                        break;
+                    case 'keygreen':
+                        this.keygreenCollected = true;
+                        break;
+                    case 'keyred':
+                        this.keyredCollected = true;
+                        break;
+                }
+                // Mostrar el botón del menú si se llena el inventario
+                if (this.inventory.length === this.maxInventorySize) {
+                    this.menuButton.setVisible(true);  // Mostrar el botón del menú
+                }
+            } else {
+                alert("¡Inventario lleno!");
             }
         }
     }
 
-    collectKey(player, key) {
-        if (this.inventory.length < this.maxInventorySize) {
-            this.inventory.push('key');
-            key.destroy(); // Eliminar la llave del juego
-            this.keyCollected = true; // Marcar la llave como recogida
-            this.updateInventory();
-        }
-    }
-    
+        
+
     updateInventory() {
-        // Limpiar visualización del inventario
-        this.inventorySlots.forEach(slot => slot.setFillStyle(0x666666));
-    
-        // Actualizar visualización del inventario con los objetos recogidos
-        this.inventory.forEach((item, index) => {
-            if (item === 'key') {
-                let keySprite = this.add.image(270 + index * 50 + 22, 540 + 22, 'key').setOrigin(0.5, 0.5);
-                keySprite.setScale(44 / keySprite.width, 22 / keySprite.height); // Ajustar la escala para que encaje en el cuadrado de 44x44
+
+        for (let i = 0; i < this.inventory.length; i++) {
+            if (i < this.inventory.length) {
+                const keyType = this.inventory[i];
+                const textureKey = keyType === 'key' ? 'key' :
+                   keyType === 'keyblue' ? 'keyblue' :
+                   keyType === 'keygreen' ? 'keygreen' :
+                   keyType === 'keyred' ? 'keyred' : null;
+                const inventoryKey = this.add.image(292 + i * 50, 562, textureKey);
+                inventoryKey.setScale(0.05);
+                this.inventorySlots.push(inventoryKey);
             }
-        });
+        }
     }
 }
