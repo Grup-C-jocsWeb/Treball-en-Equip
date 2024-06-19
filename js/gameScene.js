@@ -8,17 +8,58 @@ class GameScene extends Phaser.Scene {
     preload() {
         // Cargar los recursos del juego aquí
         this.load.spritesheet('player', 'assets/artem.png', { frameWidth: 48, frameHeight: 64 });
+        this.load.image('key', 'assets/key.png'); // Cargar la imagen de la llave
     }
 
     create(data) {
         // Inicializar los objetos del juego aquí
         this.player = this.physics.add.sprite(400, 300, 'player');
+    
+        // Crear la llave y añadirla al mundo
+        if (!this.keyCollected){
+            this.key = this.physics.add.sprite(500, 500, 'key');
+            this.key.setScale(0.1);
+        }
 
+        if (!this.keyCollected){
+            this.key = this.physics.add.sprite(400, 500, 'key');
+            this.key.setScale(0.1);
+        }
+
+        if (!this.keyCollected){
+            this.key = this.physics.add.sprite(300, 500, 'key');
+            this.key.setScale(0.1);
+        }
+
+        if (!this.keyCollected){
+            this.key = this.physics.add.sprite(200, 500, 'key');
+            this.key.setScale(0.1);
+        }
+
+        if (!this.keyCollected){
+            this.key = this.physics.add.sprite(100, 500, 'key');
+            this.key.setScale(0.1);
+        }
+        
+        // Habilitar colisiones entre el jugador y la llave
+        this.physics.add.overlap(this.player, this.key, this.collectKey, null, this);
+    
+        // Inicializar el inventario
+        this.inventory = [];
+        this.maxInventorySize = 5;
+    
+        // Crear visualización del inventario
+        this.inventorySlots = [];
+        for (let i = 0; i < this.maxInventorySize; i++) {
+            let slot = this.add.rectangle(270 + i * 50, 540, 44, 44, 0x666666).setOrigin(0);
+            this.inventorySlots.push(slot);
+        }
+    
         // Ajustar el escalado para arte de píxeles
-        this.player.setScale(1); // Aumentar o ajustar el tamaño si es necesario
+        this.player.setScale(1);
         this.player.setOrigin(0.5, 0.5);
         this.player.setTexture('player');
-
+    
         // Deshabilitar interpolación de imágenes para arte de píxeles
         this.textures.get('player').setFilter(Phaser.Textures.FilterMode.NEAREST);
 
@@ -144,8 +185,9 @@ class GameScene extends Phaser.Scene {
             player: {
                 x: this.player.x,
                 y: this.player.y
-            }
-            // Guardar otros estados del juego si es necesario
+            },
+            inventory: this.inventory, // Guardar el estado del inventario
+            keyCollected: this.keyCollected // Guardar si la llave ha sido recogida
         };
         localStorage.setItem('unmaskedCrimeSave', JSON.stringify(gameState));
         alert('Juego guardado!');
@@ -157,7 +199,38 @@ class GameScene extends Phaser.Scene {
             const gameState = JSON.parse(savedState);
             this.player.setX(gameState.player.x);
             this.player.setY(gameState.player.y);
-            // Cargar otros estados del juego si es necesario
+            // Restaurar el estado del inventario
+            this.inventory = gameState.inventory || [];
+            this.updateInventory();
+            // Restaurar el estado de la llave
+            this.keyCollected = gameState.keyCollected || false;
+            if (!this.keyCollected) {
+                this.key = this.physics.add.sprite(500, 500, 'key');
+                this.key.setScale(0.1);
+                this.physics.add.overlap(this.player, this.key, this.collectKey, null, this);
+            }
         }
+    }
+
+    collectKey(player, key) {
+        if (this.inventory.length < this.maxInventorySize) {
+            this.inventory.push('key');
+            key.destroy(); // Eliminar la llave del juego
+            this.keyCollected = true; // Marcar la llave como recogida
+            this.updateInventory();
+        }
+    }
+    
+    updateInventory() {
+        // Limpiar visualización del inventario
+        this.inventorySlots.forEach(slot => slot.setFillStyle(0x666666));
+    
+        // Actualizar visualización del inventario con los objetos recogidos
+        this.inventory.forEach((item, index) => {
+            if (item === 'key') {
+                let keySprite = this.add.image(270 + index * 50 + 22, 540 + 22, 'key').setOrigin(0.5, 0.5);
+                keySprite.setScale(44 / keySprite.width, 22 / keySprite.height); // Ajustar la escala para que encaje en el cuadrado de 44x44
+            }
+        });
     }
 }
