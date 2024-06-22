@@ -9,10 +9,29 @@ class GameScene extends Phaser.Scene {
         this.load.image('keyblue', 'assets/keyblue.png');
         this.load.image('keygreen', 'assets/keygreen.png');
         this.load.image('keyred', 'assets/keyred.png');
+        this.load.tilemapTiledJSON('map',"assets/map.json");
+        this.load.image("Tileset", "assets/dungeonex.png")
     }
 
     create(data) {
-        this.player = this.physics.add.sprite(400, 300, 'player');
+        const map = this.make.tilemap({key: "map",tileWidth:32, tileHeight: 32});
+        const tileset = map.addTilesetImage("Tileset");
+        const layer = map.createLayer("Ground", tileset, 0, 0);
+        this.player = this.physics.add.sprite(480, 300, 'player');
+        const layer1 = map.createLayer("Chairs", tileset, 0, 0);
+        const layer2 = map.createLayer("Props", tileset, 0, 0);
+        const layer3 = map.createLayer("Walls", tileset, 0, 0);
+        const layer4 = map.createLayer("Doors", tileset, 0, 0);
+
+        this.player.body.setSize(24, 32); // Set the width and height to 24 and 32 pixels
+        this.player.body.setOffset(12, 16); // Set the offset if needed (e.g., centering the smaller hitbox)
+
+        this.physics.add.collider(this.player, layer1);
+        this.physics.add.collider(this.player, layer2);
+        this.physics.add.collider(this.player, layer3);
+        layer1.setCollisionBetween(0, 100);
+        layer2.setCollisionBetween(0, 100);
+        layer3.setCollisionBetween(0, 100);
 
         this.keyCollected = false;
         this.keyblueCollected = false;
@@ -39,7 +58,8 @@ class GameScene extends Phaser.Scene {
         });
         this.inventorySlots = [];
         for (let i = 0; i < this.maxInventorySize; i++) {
-            let slot = this.add.rectangle(270 + i * 50, 540, 44, 44, 0x666666).setOrigin(0);
+            let slot = this.add.rectangle(382 + i * 50, 580, 44, 44, 0x666666).setOrigin(0);
+            slot.setAlpha(0.5); // Set the alpha to lower the opacity
             this.inventorySlots.push(slot);
         }
 
@@ -212,26 +232,26 @@ class GameScene extends Phaser.Scene {
     
     createKeys() {
         if (!this.keyCollected && (!this.inventory || !this.inventory.includes('key'))) {
-            this.key = this.physics.add.sprite(500, 500, 'key');
-            this.key.setScale(0.1);
+            this.key = this.physics.add.sprite(680, 100, 'key');
+            this.key.setScale(0.05);
             this.physics.add.overlap(this.player, this.key, () => this.collectKey('key', this.key), null, this);
         }
     
         if (!this.keyblueCollected && (!this.inventory || !this.inventory.includes('keyblue'))) {
-            this.keyblue = this.physics.add.sprite(400, 500, 'keyblue');
-            this.keyblue.setScale(0.1);
+            this.keyblue = this.physics.add.sprite(900, 550, 'keyblue');
+            this.keyblue.setScale(0.05);
             this.physics.add.overlap(this.player, this.keyblue, () => this.collectKey('keyblue', this.keyblue), null, this);
         }
     
         if (!this.keygreenCollected && (!this.inventory || !this.inventory.includes('keygreen'))) {
-            this.keygreen = this.physics.add.sprite(300, 500, 'keygreen');
-            this.keygreen.setScale(0.1);
+            this.keygreen = this.physics.add.sprite(300, 100, 'keygreen');
+            this.keygreen.setScale(0.05);
             this.physics.add.overlap(this.player, this.keygreen, () => this.collectKey('keygreen', this.keygreen), null, this);
         }
     
         if (!this.keyredCollected && (!this.inventory || !this.inventory.includes('keyred'))) {
-            this.keyred = this.physics.add.sprite(200, 500, 'keyred');
-            this.keyred.setScale(0.1);
+            this.keyred = this.physics.add.sprite(130, 600, 'keyred');
+            this.keyred.setScale(0.05);
             this.physics.add.overlap(this.player, this.keyred, () => this.collectKey('keyred', this.keyred), null, this);
         }
     }
@@ -281,7 +301,7 @@ class GameScene extends Phaser.Scene {
                    keyType === 'keyblue' ? 'keyblue' :
                    keyType === 'keygreen' ? 'keygreen' :
                    keyType === 'keyred' ? 'keyred' : null;
-                const inventoryKey = this.add.image(292 + i * 50, 562, textureKey);
+                const inventoryKey = this.add.image(405 + i * 50, 600, textureKey);
                 inventoryKey.setScale(0.05);
                 this.inventorySlots.push(inventoryKey);
             }
