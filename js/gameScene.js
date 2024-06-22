@@ -14,7 +14,6 @@ class GameScene extends Phaser.Scene {
     }
 
     create(data) {
-<<<<<<< Updated upstream
         const map = this.make.tilemap({key: "map",tileWidth:32, tileHeight: 32});
         const tileset = map.addTilesetImage("Tileset");
         const layer = map.createLayer("Ground", tileset, 0, 0);
@@ -46,41 +45,6 @@ class GameScene extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.keygreen, () => this.collectKey('keygreen', this.keygreen), null, this);
         this.physics.add.overlap(this.player, this.keyred, () => this.collectKey('keyred', this.keyred), null, this);
 
-=======
-        // Inicializar los objetos del juego aquí
-        this.player = this.physics.add.sprite(400, 300, 'player');
-    
-        // Crear la llave y añadirla al mundo
-        if (!this.keyCollected){
-            this.key0 = this.physics.add.sprite(500, 500, 'key');
-            this.key0.setScale(0.1);
-        }
-
-        if (!this.keyCollected){
-            this.key1 = this.physics.add.sprite(400, 500, 'key');
-            this.key1.setScale(0.1);
-        }
-
-        if (!this.keyCollected){
-            this.key2 = this.physics.add.sprite(300, 500, 'key');
-            this.key2.setScale(0.1);
-        }
-
-        if (!this.keyCollected){
-            this.key3 = this.physics.add.sprite(200, 500, 'key');
-            this.key3.setScale(0.1);
-        }
-
-        if (!this.keyCollected){
-            this.key4 = this.physics.add.sprite(100, 500, 'key');
-            this.key4.setScale(0.1);
-        }
-        
-        // Habilitar colisiones entre el jugador y la llave
-        this.physics.add.overlap(this.player, this.key, this.collectKey, null, this);
-    
-        // Inicializar el inventario
->>>>>>> Stashed changes
         this.inventory = [];
         this.maxInventorySize = 4;
 
