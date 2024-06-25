@@ -9,24 +9,25 @@ class MenuScene extends Phaser.Scene {
 
     create() {
         // Título del juego
-        this.add.text(400, 200, 'Unmasked Crime', { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
+        this.add.text(480, 200, 'Unmasked Crime', { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
 
         // Botón de "Play"
-        const playButton = this.add.text(400, 350, 'Play', { fontSize: '32px', fill: '#fff' })
+        this.playButton = this.add.text(480, 350, 'Play', { fontSize: '32px', fill: '#fff' })
             .setOrigin(0.5)
-            .setInteractive();
+            .setInteractive()
+            .setVisible(true);
 
-        playButton.on('pointerdown', () => {
+        this.playButton.on('pointerdown', () => {
             this.showPlayOptions();
         });
 
         // Crear botones de "Nueva Partida" y "Cargar Partida" pero ocultarlos inicialmente
-        this.newGameButton = this.add.text(400, 400, 'Nueva Partida', { fontSize: '32px', fill: '#fff' })
+        this.newGameButton = this.add.text(480, 400, 'Nueva Partida', { fontSize: '32px', fill: '#fff' })
             .setOrigin(0.5)
             .setInteractive()
             .setVisible(false);
 
-        this.loadGameButton = this.add.text(400, 450, 'Cargar Partida', { fontSize: '32px', fill: '#fff' })
+        this.loadGameButton = this.add.text(480, 450, 'Cargar Partida', { fontSize: '32px', fill: '#fff' })
             .setOrigin(0.5)
             .setInteractive()
             .setVisible(false);
@@ -44,6 +45,7 @@ class MenuScene extends Phaser.Scene {
     }
 
     showPlayOptions() {
+        this.playButton.setVisible(false);
         this.newGameButton.setVisible(true);
         this.loadGameButton.setVisible(true);
     }

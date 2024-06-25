@@ -54,7 +54,7 @@ class GameScene extends Phaser.Scene {
         this.inventory = [];
         this.maxInventorySize = 4;
 
-        this.menuButton = this.add.text(400, 450, 'Ir al Menú', { fontSize: '32px', fill: '#fff' })
+        this.menuButton = this.add.text(480, 450, 'Ir al Menú', { fontSize: '32px', fill: '#fff' })
             .setOrigin(0.5)
             .setInteractive()
             .setVisible(false);
@@ -122,19 +122,19 @@ class GameScene extends Phaser.Scene {
 
         this.input.keyboard.on('keydown-ESC', this.pauseGame, this);
 
-        this.resumeButton = this.add.text(400, 150, 'Reanudar', { fontSize: '32px', fill: '#fff' })
+        this.resumeButton = this.add.text(480, 200, 'Reanudar', { fontSize: '32px', fill: '#fff' })
             .setDepth(1)
             .setOrigin(0.5)
             .setInteractive()
             .setVisible(false);
 
-        this.menuButton = this.add.text(400, 250, 'Volver al menú', { fontSize: '32px', fill: '#fff' })
+        this.saveButton = this.add.text(480, 300, 'Guardar', { fontSize: '32px', fill: '#fff' })
             .setDepth(1)
             .setOrigin(0.5)
             .setInteractive()
             .setVisible(false);
 
-        this.saveButton = this.add.text(400, 350, 'Guardar', { fontSize: '32px', fill: '#fff' })
+        this.menuButton = this.add.text(480, 400, 'Volver al menú', { fontSize: '32px', fill: '#fff' })
             .setDepth(1)
             .setOrigin(0.5)
             .setInteractive()
