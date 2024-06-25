@@ -3,7 +3,7 @@ window.onload = function() {
         type: Phaser.AUTO,
         width: 960,
         height: 640,
-        scene: [MenuScene, GameScene],
+        scene: [MenuScene, GameScene, HipotesisScene],
         parent: 'game-container',
         physics: {
             default: 'arcade',
