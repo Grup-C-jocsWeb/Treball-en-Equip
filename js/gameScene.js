@@ -24,8 +24,19 @@ class GameScene extends Phaser.Scene {
         const layer2 = map.createLayer("Props", tileset, 0, 0);
         const layer3 = map.createLayer("Walls", tileset, 0, 0);
         const layer4 = map.createLayer("Doors", tileset, 0, 0);
-        this.cop = this.physics.add.sprite(200, 300, 'cop');
-        this.prisoner = this.physics.add.sprite(600, 600, 'prisoner');
+        this.cop = this.physics.add.sprite(200, 300, 'cop').setImmovable(true);
+        this.prisoner = this.physics.add.sprite(600, 600, 'prisoner').setImmovable(true);
+
+        // Crear zonas de detección de proximidad invisibles
+        this.copProximityZone = this.add.zone(this.cop.x, this.cop.y).setSize(30, 30);
+        this.physics.world.enable(this.copProximityZone);
+        this.copProximityZone.body.setAllowGravity(false);
+        this.copProximityZone.body.moves = false;
+
+        this.prisonerProximityZone = this.add.zone(this.prisoner.x, this.prisoner.y).setSize(30, 30);
+        this.physics.world.enable(this.prisonerProximityZone);
+        this.prisonerProximityZone.body.setAllowGravity(false);
+        this.prisonerProximityZone.body.moves = false;
 
         this.player.body.setSize(24, 32); // Set the width and height to 24 and 32 pixels
         this.player.body.setOffset(12, 16); // Set the offset if needed (e.g., centering the smaller hitbox)
@@ -38,6 +49,13 @@ class GameScene extends Phaser.Scene {
         layer1.setCollisionBetween(0, 100);
         layer2.setCollisionBetween(0, 100);
         layer3.setCollisionBetween(0, 100);
+        
+
+        this.physics.world.setBoundsCollision(true, true, true, true);
+        this.player.setCollideWorldBounds(true);
+
+        this.physics.add.collider(this.player, this.cop);
+        this.physics.add.collider(this.player, this.prisoner);
 
         this.keyCollected = false;
         this.keyblueCollected = false;
@@ -166,8 +184,8 @@ class GameScene extends Phaser.Scene {
         this.blackBackground.setMask(this.mask);
         
         // Add overlap for cop and prisoner
-        this.physics.add.overlap(this.player, this.cop, this.showCopText, null, this);
-        this.physics.add.overlap(this.player, this.prisoner, this.showPrisonerText, null, this);
+        this.physics.add.overlap(this.player, this.copProximityZone, this.showCopText, null, this);
+        this.physics.add.overlap(this.player, this.prisonerProximityZone, this.showPrisonerText, null, this);
     }
 
     update() {
@@ -316,6 +334,7 @@ class GameScene extends Phaser.Scene {
                 // Mostrar el botón del menú si se llena el inventario
                 if (this.inventory.length === this.maxInventorySize) {
                     this.hipotesisButton.setVisible(true);
+                    this.menuButton.setVisible(true);  // Mostrar el botón del menú
                 }
             } else {
                 alert("¡Inventario lleno!");
