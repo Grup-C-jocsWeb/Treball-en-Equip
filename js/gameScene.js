@@ -28,12 +28,12 @@ class GameScene extends Phaser.Scene {
         this.prisoner = this.physics.add.sprite(600, 600, 'prisoner').setImmovable(true);
 
         // Crear zonas de detección de proximidad invisibles
-        this.copProximityZone = this.add.zone(this.cop.x, this.cop.y).setSize(30, 30);
+        this.copProximityZone = this.add.zone(this.cop.x, this.cop.y).setSize(50, 50);
         this.physics.world.enable(this.copProximityZone);
         this.copProximityZone.body.setAllowGravity(false);
         this.copProximityZone.body.moves = false;
 
-        this.prisonerProximityZone = this.add.zone(this.prisoner.x, this.prisoner.y).setSize(30, 30);
+        this.prisonerProximityZone = this.add.zone(this.prisoner.x, this.prisoner.y).setSize(50, 50);
         this.physics.world.enable(this.prisonerProximityZone);
         this.prisonerProximityZone.body.setAllowGravity(false);
         this.prisonerProximityZone.body.moves = false;
