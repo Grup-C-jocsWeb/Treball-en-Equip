@@ -73,7 +73,7 @@ class GameScene extends Phaser.Scene {
         this.maxInventorySize = 4;
         
         //Hipotesis button
-        this.hipotesisButton = this.add.text(700, 600, 'Hipotesis', { fontSize: '32px', fill: '#fff' })
+        this.hipotesisButton = this.add.text(700, 585, 'Hipotesis', { fontSize: '32px', fill: '#fff' })
             .setDepth(1)
             .setInteractive()
             .setVisible(false);
@@ -334,7 +334,6 @@ class GameScene extends Phaser.Scene {
                 // Mostrar el botón del menú si se llena el inventario
                 if (this.inventory.length === this.maxInventorySize) {
                     this.hipotesisButton.setVisible(true);
-                    this.menuButton.setVisible(true);  // Mostrar el botón del menú
                 }
             } else {
                 alert("¡Inventario lleno!");

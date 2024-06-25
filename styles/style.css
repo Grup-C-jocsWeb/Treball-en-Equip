@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'PixelFont';
+    src: url('04B_30__.TTF') format('truetype');
+}
+
 body {
     margin: 0;
     display: flex;
@@ -6,7 +11,7 @@ body {
     height: 100vh;
     background-color: #222;
     color: #fff;
-    font-family: Arial, sans-serif;
+    font-family: 'PixelFont', Arial, sans-serif;
 }
 
 canvas {
