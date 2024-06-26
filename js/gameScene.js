@@ -290,10 +290,10 @@ class GameScene extends Phaser.Scene {
     
     createKeys() {
         // Crear todas las llaves en el mapa, independientemente del estado de recolección
-        this.key = this.physics.add.sprite(480, 350, 'key').setScale(0.05);
-        this.keyblue = this.physics.add.sprite(530, 350, 'keyblue').setScale(0.05);
-        this.keygreen = this.physics.add.sprite(580, 350, 'keygreen').setScale(0.05);
-        this.keyred = this.physics.add.sprite(630, 350, 'keyred').setScale(0.05);
+        this.key = this.physics.add.sprite(680, 100, 'key').setScale(0.05);
+        this.keyblue = this.physics.add.sprite(900, 550, 'keyblue').setScale(0.05);
+        this.keygreen = this.physics.add.sprite(300, 100, 'keygreen').setScale(0.05);
+        this.keyred = this.physics.add.sprite(130, 600, 'keyred').setScale(0.05);
 
         // Agregar colisión y overlap para cada llave
         this.physics.add.overlap(this.player, this.key, () => this.collectKey('key', this.key), null, this);

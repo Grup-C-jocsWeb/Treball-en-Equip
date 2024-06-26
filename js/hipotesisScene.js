@@ -12,6 +12,7 @@ class HipotesisScene extends Phaser.Scene {
     }
 
     create() {
+        this.buttonClicked = false;
         // Center X position
         const centerX = this.cameras.main.width / 2;
 

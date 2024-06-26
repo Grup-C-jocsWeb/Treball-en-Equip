@@ -4,17 +4,11 @@ class MenuScene extends Phaser.Scene {
     }
 
     preload() {
-        // Cargar el archivo SVG como un HTML
-        this.load.html('logo', 'assets/logo_unmasked.svg');
     }
 
     create() {
         // Título del juego
-        this.add.text(480, 100, 'UNMASKED CRIME', { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
-
-        // Añadir el SVG como un elemento DOM
-        const logoElement = this.add.dom(480, 250).createFromCache('logo');
-        
+        this.add.text(480, 250, 'UNMASKED CRIME', { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
 
         // Botón de "Play"
         this.playButton = this.add.text(480, 350, 'PLAY', { fontSize: '32px', fill: '#fff' })
@@ -41,12 +35,10 @@ class MenuScene extends Phaser.Scene {
         this.newGameButton.on('pointerdown', () => {
             // Limpiar cualquier estado guardado
             localStorage.removeItem('unmaskedCrimeSave');
-            // Reiniciar el juego iniciando la escena GameScene
             this.scene.start('GameScene', { loadGame: false });
         });
 
         this.loadGameButton.on('pointerdown', () => {
-            // Cargar la partida guardada
             this.scene.start('GameScene', { loadGame: true });
         });
     }

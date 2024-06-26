@@ -16,3 +16,10 @@ canvas {
 #game-container {
     position: relative;
 }
+
+svg#logo {
+    position: absolute;
+    top: -10px; /* Ajusta según sea necesario para alinear correctamente con el título */
+    left: calc(50% - 135px); /* Ajusta para centrar horizontalmente */
+    z-index: 1; /* Asegura que el logo esté sobre el título */
+}
