@@ -73,7 +73,7 @@ class GameScene extends Phaser.Scene {
         this.maxInventorySize = 4;
 
         //Hipotesis button
-        this.hipotesisButton = this.add.text(700, 585, 'Hipotesis', { fontSize: '32px', fill: '#fff' })
+        this.hipotesisButton = this.add.text(700, 585, 'HYPOTHESIS', { fontSize: '32px', fill: '#fff' })
             .setDepth(1)
             .setInteractive()
             .setVisible(false);

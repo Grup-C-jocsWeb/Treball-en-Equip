@@ -4,15 +4,20 @@ class MenuScene extends Phaser.Scene {
     }
 
     preload() {
-
+        // Cargar el archivo SVG como un HTML
+        this.load.html('logo', 'assets/logo_unmasked.svg');
     }
 
     create() {
         // Título del juego
-        this.add.text(480, 200, 'Unmasked Crime', { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
+        this.add.text(480, 100, 'UNMASKED CRIME', { fontSize: '48px', fill: '#fff' }).setOrigin(0.5);
+
+        // Añadir el SVG como un elemento DOM
+        const logoElement = this.add.dom(480, 250).createFromCache('logo');
+        
 
         // Botón de "Play"
-        this.playButton = this.add.text(480, 350, 'Play', { fontSize: '32px', fill: '#fff' })
+        this.playButton = this.add.text(480, 350, 'PLAY', { fontSize: '32px', fill: '#fff' })
             .setOrigin(0.5)
             .setInteractive()
             .setVisible(true);
@@ -22,12 +27,12 @@ class MenuScene extends Phaser.Scene {
         });
 
         // Botones de "Nueva Partida" y "Cargar Partida"
-        this.newGameButton = this.add.text(480, 400, 'Nueva Partida', { fontSize: '32px', fill: '#fff' })
+        this.newGameButton = this.add.text(480, 400, 'NEW GAME', { fontSize: '32px', fill: '#fff' })
             .setOrigin(0.5)
             .setInteractive()
             .setVisible(false);
 
-        this.loadGameButton = this.add.text(480, 450, 'Cargar Partida', { fontSize: '32px', fill: '#fff' })
+        this.loadGameButton = this.add.text(480, 450, 'LOAD GAME', { fontSize: '32px', fill: '#fff' })
             .setOrigin(0.5)
             .setInteractive()
             .setVisible(false);
