@@ -71,7 +71,7 @@ class GameScene extends Phaser.Scene {
 
         this.inventory = [];
         this.maxInventorySize = 4;
-        
+
         //Hipotesis button
         this.hipotesisButton = this.add.text(700, 585, 'Hipotesis', { fontSize: '32px', fill: '#fff' })
             .setDepth(1)
@@ -243,7 +243,8 @@ class GameScene extends Phaser.Scene {
             keyCollected: this.keyCollected,
             keyblueCollected: this.keyblueCollected,
             keygreenCollected: this.keygreenCollected,
-            keyredCollected: this.keyredCollected
+            keyredCollected: this.keyredCollected,
+            hipotesisButtonVisible: this.hipotesisButton.visible
         };
         localStorage.setItem('unmaskedCrimeSave', JSON.stringify(gameState));
         alert('Juego guardado!');
@@ -278,33 +279,27 @@ class GameScene extends Phaser.Scene {
             if (this.keyredCollected && this.keyred) {
                 this.keyred.destroy();
             }
+            // Restaurar el estado del botón de hipótesis
+            if (gameState.hipotesisButtonVisible) {
+                this.hipotesisButton.setVisible(true);
+            } else {
+                this.hipotesisButton.setVisible(false);
+            }
         }
     }
     
     createKeys() {
-        if (!this.keyCollected && (!this.inventory || !this.inventory.includes('key'))) {
-            this.key = this.physics.add.sprite(480, 350, 'key');
-            this.key.setScale(0.05);
-            this.physics.add.overlap(this.player, this.key, () => this.collectKey('key', this.key), null, this);
-        }
-    
-        if (!this.keyblueCollected && (!this.inventory || !this.inventory.includes('keyblue'))) {
-            this.keyblue = this.physics.add.sprite(530, 350, 'keyblue');
-            this.keyblue.setScale(0.05);
-            this.physics.add.overlap(this.player, this.keyblue, () => this.collectKey('keyblue', this.keyblue), null, this);
-        }
-    
-        if (!this.keygreenCollected && (!this.inventory || !this.inventory.includes('keygreen'))) {
-            this.keygreen = this.physics.add.sprite(580, 350, 'keygreen');
-            this.keygreen.setScale(0.05);
-            this.physics.add.overlap(this.player, this.keygreen, () => this.collectKey('keygreen', this.keygreen), null, this);
-        }
-    
-        if (!this.keyredCollected && (!this.inventory || !this.inventory.includes('keyred'))) {
-            this.keyred = this.physics.add.sprite(630, 350, 'keyred');
-            this.keyred.setScale(0.05);
-            this.physics.add.overlap(this.player, this.keyred, () => this.collectKey('keyred', this.keyred), null, this);
-        }
+        // Crear todas las llaves en el mapa, independientemente del estado de recolección
+        this.key = this.physics.add.sprite(480, 350, 'key').setScale(0.05);
+        this.keyblue = this.physics.add.sprite(530, 350, 'keyblue').setScale(0.05);
+        this.keygreen = this.physics.add.sprite(580, 350, 'keygreen').setScale(0.05);
+        this.keyred = this.physics.add.sprite(630, 350, 'keyred').setScale(0.05);
+
+        // Agregar colisión y overlap para cada llave
+        this.physics.add.overlap(this.player, this.key, () => this.collectKey('key', this.key), null, this);
+        this.physics.add.overlap(this.player, this.keyblue, () => this.collectKey('keyblue', this.keyblue), null, this);
+        this.physics.add.overlap(this.player, this.keygreen, () => this.collectKey('keygreen', this.keygreen), null, this);
+        this.physics.add.overlap(this.player, this.keyred, () => this.collectKey('keyred', this.keyred), null, this);
     }
     
 
@@ -368,4 +363,5 @@ class GameScene extends Phaser.Scene {
         const text = this.add.text(480, 100, 'You should look the cell on the right...', { fontSize: '24px', fill: '#fff' }).setOrigin(0.5);
         this.time.delayedCall(3000, () => text.destroy(), [], this);
     }
+
 }
